@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hookphalanx"
+version = "0.1.0"
+description = "Zero-Trust Phishing Link Sandbox & Heuristic Threat Inspector"
+readme = "README.md"
+authors = [{ name = "Scempyyy" }]
+license = { text = "MIT" }
+requires-python = ">=3.8"
+keywords = ["security", "phishing", "sandbox", "cybersecurity", "threat-intelligence", "homograph"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+
+[project.scripts]
+hookphalanx = "hookphalanx.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["hookphalanx*"]

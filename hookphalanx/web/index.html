@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HookPhalanx - Zero-Trust Phishing Link Sandbox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              900: '#070b14',
+              800: '#0e1626',
+              700: '#17233d',
+              border: '#1f2e4d',
+              accent: '#06b6d4',
+              danger: '#f43f5e',
+              warning: '#f59e0b',
+              safe: '#10b981'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cyber-900 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+  <!-- Header -->
+  <header class="border-b border-cyber-border bg-cyber-800/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg text-white tracking-wide">HOOK<span class="text-cyan-400">PHALANX</span></h1>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">v0.1.0</span>
+          </div>
+          <p class="text-xs text-slate-400">Zero-Trust Link Sandbox & Threat Heuristic Engine</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 text-xs font-mono">
+        <span class="flex items-center space-x-1.5 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>SANDBOX ISOLATED</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Inspection Form Box -->
+    <div class="bg-cyber-800 border border-cyber-border rounded-xl p-6 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-3xl space-y-4">
+        <h2 class="text-xl font-semibold text-white">Detonate & Inspect Suspicious Target URL</h2>
+        <p class="text-sm text-slate-400">Safely analyze redirection chains, homoglyph punycodes, spoofed brand targets, and credential harvesting forms without revealing your device or identity.</p>
+
+        <form id="scanForm" class="flex flex-col sm:flex-row gap-3 pt-2">
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 font-mono text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </div>
+            <input type="text" id="targetUrl" placeholder="https://secure-login-verify.paypal.example-service.xyz/auth" 
+              class="w-full pl-10 pr-4 py-2.5 bg-cyber-900 border border-cyber-border rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 font-mono transition" required />
+          </div>
+          <button type="submit" id="scanBtn" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg text-sm transition flex items-center justify-center space-x-2 shrink-0">
+            <span>DETONATE</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Quick Samples -->
+        <div class="flex items-center space-x-2 text-xs pt-1 text-slate-500">
+          <span>Quick Samples:</span>
+          <button onclick="setSample('https://paypal.verify-account-urgent.xyz/login')" class="hover:text-cyan-400 underline font-mono">Brand Spoof (.xyz)</button>
+          <span>•</span>
+          <button onclick="setSample('http://192.168.1.100/admin/reset')" class="hover:text-cyan-400 underline font-mono">IP Hostname</button>
+          <span>•</span>
+          <button onclick="setSample('https://github.com/Scempyyy/HookPhalanx')" class="hover:text-cyan-400 underline font-mono">Clean Target</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section (Hidden until scan) -->
+    <div id="resultsView" class="hidden space-y-6">
+
+      <!-- Verdict Banner -->
+      <div id="verdictCard" class="border rounded-xl p-6 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-3">
+            <span id="verdictBadge" class="text-xs font-mono font-bold px-3 py-1 rounded tracking-wider">VERDICT</span>
+            <span class="text-slate-400 text-xs font-mono" id="scanTimestamp"></span>
+          </div>
+          <h3 id="verdictHeadline" class="text-2xl font-bold">Threat Evaluation</h3>
+          <p id="verdictSummary" class="text-sm text-slate-300 max-w-2xl"></p>
+        </div>
+
+        <div class="flex items-center space-x-6 border-t md:border-t-0 md:border-l border-cyber-border pt-4 md:pt-0 md:pl-6 shrink-0">
+          <div class="text-center">
+            <div id="scoreNumber" class="text-4xl font-bold font-mono">0</div>
+            <div class="text-[11px] uppercase tracking-wider text-slate-400 font-mono">Threat Score / 100</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicators and Hops Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Detected Indicators -->
+        <div class="lg:col-span-2 bg-cyber-800 border border-cyber-border rounded-xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>Security Indicators & Heuristics</span>
+            </h4>
+            <span id="indicatorCount" class="text-xs font-mono px-2 py-0.5 rounded bg-cyber-900 text-slate-400 border border-cyber-border">0 Found</span>
+          </div>
+
+          <div id="indicatorsList" class="space-y-3">
+            <!-- Dynamic items -->
+          </div>
+        </div>
+
+        <!-- Redirection & Metadata Panel -->
+        <div class="space-y-6">
+          <!-- Redirection Hops -->
+          <div class="bg-cyber-800 border border-cyber-border rounded-xl p-6 space-y-4">
+            <h4 class="font-semibold text-white flex items-center space-x-2">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+              <span>Redirection Path</span>
+            </h4>
+            <div id="hopsList" class="space-y-2 text-xs font-mono">
+              <!-- Dynamic hops -->
+            </div>
+          </div>
+
+          <!-- Page Telemetry -->
+          <div class="bg-cyber-800 border border-cyber-border rounded-xl p-6 space-y-3">
+            <h4 class="font-semibold text-white text-sm">Target Page Telemetry</h4>
+            <div class="space-y-2 text-xs font-mono text-slate-300">
+              <div class="flex justify-between py-1 border-b border-cyber-border">
+                <span class="text-slate-500">Page Title:</span>
+                <span id="pageTitle" class="truncate max-w-[180px] text-white">-</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-cyber-border">
+                <span class="text-slate-500">Password Fields:</span>
+                <span id="pagePassField" class="text-white">-</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-cyber-border">
+                <span class="text-slate-500">Credit Card Inputs:</span>
+                <span id="pageCardField" class="text-white">-</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-cyber-border">
+                <span class="text-slate-500">Meta Refresh:</span>
+                <span id="pageMeta" class="truncate max-w-[180px] text-white">None</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="border-t border-cyber-border py-6 text-center text-xs text-slate-500 font-mono">
+    HookPhalanx Zero-Trust Threat Lab • Open Source Defensive Tooling
+  </footer>
+
+  <script>
+    function setSample(url) {
+      document.getElementById('targetUrl').value = url;
+      document.getElementById('scanForm').dispatchEvent(new Event('submit'));
+    }
+
+    document.getElementById('scanForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const target = document.getElementById('targetUrl').value.trim();
+      if (!target) return;
+
+      const btn = document.getElementById('scanBtn');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<span class="animate-spin mr-2">⟳</span> Scanning...`;
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch(`/api/scan?url=${encodeURIComponent(target)}`);
+        const data = await resp.json();
+        renderResults(data);
+      } catch (err) {
+        alert("Failed to analyze target: " + err.message);
+      } finally {
+        btn.innerHTML = origHtml;
+        btn.disabled = false;
+      }
+    });
+
+    function renderResults(data) {
+      const resultsView = document.getElementById('resultsView');
+      resultsView.classList.remove('hidden');
+
+      const verdictCard = document.getElementById('verdictCard');
+      const verdictBadge = document.getElementById('verdictBadge');
+      const verdictHeadline = document.getElementById('verdictHeadline');
+      const verdictSummary = document.getElementById('verdictSummary');
+      const scoreNumber = document.getElementById('scoreNumber');
+
+      scoreNumber.innerText = data.score;
+      document.getElementById('scanTimestamp').innerText = new Date().toLocaleTimeString();
+
+      if (data.grade === 'MALICIOUS') {
+        verdictCard.className = 'border rounded-xl p-6 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-rose-950/20 border-rose-500/40 text-rose-300';
+        verdictBadge.className = 'text-xs font-mono font-bold px-3 py-1 rounded tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30';
+        verdictBadge.innerText = 'CRITICAL THREAT';
+        verdictHeadline.innerText = 'High Confidence Malicious / Phishing Threat';
+        verdictHeadline.className = 'text-2xl font-bold text-rose-400';
+        verdictSummary.innerText = `Domain '${data.hostname}' exhibits high-risk indicators characteristic of credential theft or homoglyph impersonation.`;
+      } else if (data.grade === 'DANGEROUS') {
+        verdictCard.className = 'border rounded-xl p-6 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-amber-950/20 border-amber-500/40 text-amber-300';
+        verdictBadge.className = 'text-xs font-mono font-bold px-3 py-1 rounded tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        verdictBadge.innerText = 'DANGEROUS LINK';
+        verdictHeadline.innerText = 'Elevated Risk Factors Detected';
+        verdictHeadline.className = 'text-2xl font-bold text-amber-400';
+        verdictSummary.innerText = `Suspicious redirection or domain patterns detected on '${data.hostname}'. Exercise high caution.`;
+      } else if (data.grade === 'SUSPICIOUS') {
+        verdictCard.className = 'border rounded-xl p-6 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-yellow-950/20 border-yellow-500/40 text-yellow-300';
+        verdictBadge.className = 'text-xs font-mono font-bold px-3 py-1 rounded tracking-wider bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
+        verdictBadge.innerText = 'SUSPICIOUS';
+        verdictHeadline.innerText = 'Unusual Domain or Transport Signals';
+        verdictHeadline.className = 'text-2xl font-bold text-yellow-400';
+        verdictSummary.innerText = `Some non-standard traits detected for '${data.hostname}'.`;
+      } else {
+        verdictCard.className = 'border rounded-xl p-6 transition flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-emerald-950/20 border-emerald-500/40 text-emerald-300';
+        verdictBadge.className = 'text-xs font-mono font-bold px-3 py-1 rounded tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        verdictBadge.innerText = 'CLEAN / LOW RISK';
+        verdictHeadline.innerText = 'No Phishing Signatures Identified';
+        verdictHeadline.className = 'text-2xl font-bold text-emerald-400';
+        verdictSummary.innerText = `Standard domain architecture, valid TLS, and clean response heuristics for '${data.hostname}'.`;
+      }
+
+      // Render indicators
+      const indList = document.getElementById('indicatorsList');
+      const indCount = document.getElementById('indicatorCount');
+      indCount.innerText = `${data.indicators.length} Found`;
+      indList.innerHTML = '';
+
+      if (data.indicators.length === 0) {
+        indList.innerHTML = `<div class="p-4 rounded-lg bg-cyber-900 border border-cyber-border text-xs text-slate-400">Zero active threat signatures matched during sandbox detonation.</div>`;
+      } else {
+        data.indicators.forEach(ind => {
+          let sevClass = 'bg-slate-700/20 text-slate-300 border-slate-700';
+          if (ind.severity === 'CRITICAL') sevClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+          else if (ind.severity === 'HIGH') sevClass = 'bg-orange-500/20 text-orange-300 border-orange-500/40';
+          else if (ind.severity === 'MEDIUM') sevClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+          else if (ind.severity === 'LOW') sevClass = 'bg-blue-500/20 text-blue-300 border-blue-500/40';
+
+          const item = document.createElement('div');
+          item.className = 'p-3 rounded-lg bg-cyber-900 border border-cyber-border space-y-1';
+          item.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-medium text-white text-sm">${ind.title}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${sevClass}">${ind.severity} (+${ind.points} pts)</span>
+            </div>
+            <p class="text-xs text-slate-400">${ind.detail}</p>
+          `;
+          indList.appendChild(item);
+        });
+      }
+
+      // Render hops
+      const hopsList = document.getElementById('hopsList');
+      hopsList.innerHTML = '';
+      if (!data.hops || data.hops.length === 0) {
+        hopsList.innerHTML = `<div class="text-slate-500">No external redirection hops recorded.</div>`;
+      } else {
+        data.hops.forEach(h => {
+          const hopDiv = document.createElement('div');
+          hopDiv.className = 'p-2 rounded bg-cyber-900 border border-cyber-border flex items-center justify-between';
+          hopDiv.innerHTML = `
+            <span class="truncate max-w-[200px] text-slate-300">${h.url}</span>
+            <span class="px-1.5 py-0.5 rounded ${h.status >= 300 && h.status < 400 ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300'}">${h.status || h.error || 'ERR'}</span>
+          `;
+          hopsList.appendChild(hopDiv);
+        });
+      }
+
+      // Telemetry
+      const p = data.page_info || {};
+      document.getElementById('pageTitle').innerText = p.title || '(No HTML title detected)';
+      document.getElementById('pagePassField').innerText = p.has_password_field ? 'YES (HARVESTING RISK)' : 'None';
+      document.getElementById('pagePassField').className = p.has_password_field ? 'text-rose-400 font-bold' : 'text-slate-400';
+      document.getElementById('pageCardField').innerText = p.has_credit_card_field ? 'YES (FINANCIAL TARGET)' : 'None';
+      document.getElementById('pageCardField').className = p.has_credit_card_field ? 'text-rose-400 font-bold' : 'text-slate-400';
+      document.getElementById('pageMeta').innerText = p.meta_redirect || 'None';
+    }
+  </script>
+</body>
+</html>
